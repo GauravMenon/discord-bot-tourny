@@ -1,6 +1,7 @@
 import { Client, Events, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
 import * as tourny from './commands/tourny.js'
+import * as quickmatch from './commands/quickmatch.js'
 
 config()
 
@@ -28,5 +29,8 @@ async function handleInteraction(interaction) {
         return;
     if (interaction.commandName === 'createtournament') {
         await tourny.execute(interaction)
+    }
+    if (interaction.commandName === 'quickmatch'){
+        await quickmatch.execute(interaction)
     }
 }
