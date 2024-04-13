@@ -9,11 +9,11 @@ import fs from 'node:fs';
 config(); // Using dotenv config function directly
 
 const commands = [];
-const commandFiles = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync('./commands/utility').filter((file) => file.endsWith('.js'));
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-  const command = await import(`./commands/${file}`); // Using dynamic import
+  const command = await import(`./commands/utility/${file}`); // Using dynamic import
   if ('data' in command && 'execute' in command) {
     commands.push(command.data.toJSON());
   } else {
