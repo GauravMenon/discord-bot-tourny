@@ -16,7 +16,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 // Adds a .command property to my client so it can access commands in other files
 client.commands = new Collection();
 
-// Dynamically retrive the command files
+// Dynamically retrieve the command files
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolder = fs.readdirSync(foldersPath);
 
@@ -39,4 +39,5 @@ for (const folder of commandFolder) {
     }
 }
 
+//Allows access to the bot with the token
 client.login(process.env.TOKEN);
