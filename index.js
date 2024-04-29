@@ -27,7 +27,7 @@ for (const folder of commandFolder) {
         const filePath = path.join(commandsPath, file);
         const fileURL = new URL(`file://${filePath}`);
         import(fileURL).then(commandModule => {
-            const command = commandModule;
+            const command = commandModule.default;
             if ('data' in command && 'execute' in command) {
                 client.commands.set(command.data.name, command);
             } else {
@@ -37,6 +37,25 @@ for (const folder of commandFolder) {
             console.error(`Error loading command from ${filePath}:`, error)
         });
     }
+}
+
+//Dynamically retrieve the events files
+const eventsPath = path.join(__dirname, 'events');
+const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
+
+for (const file of eventFiles){
+    const filePath = path.join(eventsPath, file);
+    const fileURL = new URL(`file://${filePath}`);
+    import(fileURL).then(eventModule => {
+        const event = eventModule.default;
+        if (event.once) {
+            client.once(event.name, (...args) => event.execute(...args));
+        } else {
+            client.on(event.name, (...args) => event.execute(...args));
+        }
+    }).catch(error => {
+        console.error(`Error loading command from ${filePath}:`, error)
+    });
 }
 
 //Allows access to the bot with the token

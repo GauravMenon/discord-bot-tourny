@@ -13,7 +13,7 @@ const commandFiles = fs.readdirSync('./commands/utility').filter((file) => file.
 
 // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
 for (const file of commandFiles) {
-  const command = await import(`./commands/utility/${file}`); // Using dynamic import
+  const {default: command} = await import(`./commands/utility/${file}`); // Using dynamic import
   if ('data' in command && 'execute' in command) {
     commands.push(command.data.toJSON());
   } else {
