@@ -1,19 +1,37 @@
-import { SlashCommandBuilder } from "discord.js";
+import { Component, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle} from "discord.js";
 
 export default{ 
     data: new SlashCommandBuilder()
         .setName('quickmatch')
-        .setDescription('Set up a quickmatch between friends! Choose what the layout should be [3v3, 4v4 or 5v5]')
+        .setDescription('Set up a an inhouse quickmatch between friends!')
         .addStringOption(option => 
-            option.setName('numberofplayers')
-                .setDescription('the choice of what the team sizes should be')
+            option.setName('game')
+                .setDescription('What game is being played?')
                 .setRequired(true)
                 .addChoices(
-                    {name: '3v3', value: 'player3v3'},
-                    {name: '4v4', value: 'player4v4'},
-                    {name: '5v5', value: 'player5v5'},
-                )),
+                    {name: 'Call of Duty', value: 'CallofDuty'},
+                    {name: 'League of Legends', value: 'LeagueofLegends'},
+                    {name: 'Valorant', value: 'Valorant'},
+                ))
+        .addStringOption(option => 
+            option.setName('teamsize')
+                .setDescription('What are the team sizes?')
+                .setRequired(true)
+                .addChoices(
+                    {name: '3v3', value: '3v3'},
+                    {name: '4v4', value: '4v4'},
+                    {name: '5v5', value: '5v5'},                   
+                ))
+                
+        .addUserOption(option =>
+            option.setName('player')
+                .setDescription('Who is playing?')
+                .setRequired(true)
+        ),
     async execute(interaction){
-        await interaction.reply('Quickmatch created!');
+
+        await interaction.reply({
+            content: `Quickmatch made!`
+        });
     },
 };
