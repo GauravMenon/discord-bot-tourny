@@ -5,6 +5,6 @@ export default {
 		.setName('createtournament')
 		.setDescription('Creates the tournament that you want to use'),
 	async execute(interaction) {
-		await interaction.reply('The tournament has been made! Good luck players!');
+		await interaction.reply({content: 'Currently in development', ephemeral: true});
 	},
 };
