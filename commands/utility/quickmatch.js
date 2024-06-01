@@ -3,7 +3,7 @@ import { UserSelectMenuBuilder, StringSelectMenuBuilder, StringSelectMenuOptionB
 export default{ 
     data: new SlashCommandBuilder()
         .setName('quickmatch')
-        .setDescription('Set up a an inhouse quickmatch between friends!')
+        .setDescription('Set up a inhouse quickmatch between friends!')
         .addStringOption(option => 
             option.setName('game')
                 .setDescription('What game is being played?')
@@ -13,28 +13,11 @@ export default{
                     {name: 'League of Legends', value: 'League of Legends'},
                     {name: 'Valorant', value: 'Valorant'},
                 )),
-        // .addStringOption(option => 
-        //     option.setName('teamsize')
-        //         .setDescription('What are the team sizes?')
-        //         .setRequired(true)
-        //         .addChoices(
-        //             {name: '3v3', value: '3v3'},
-        //             {name: '4v4', value: '4v4'},
-        //             {name: '5v5', value: '5v5'},                   
-        //         )),
-                
-        // .addUserOption(option =>
-        //     option.setName('player')
-        //         .setDescription('Who is playing?')
-        //         .setRequired(true)
-        // )  //Make sure to re add , to this line if you still use it
 
     async execute(interaction){
-        const target = interaction.options.getUser('target')
-
         const gameName = interaction.options.getString('game') ?? 'No game chosen';
-        const teamsize = interaction.options.getString('teamsize') ?? 'No team size chosen';
 
+        //Creates a dropdown menu selector that asks you what the team sizes should be
         const select = new StringSelectMenuBuilder()
         .setCustomId('teamsize')
         .setPlaceholder('Choose the team sizes!')
@@ -85,18 +68,10 @@ export default{
         const row = new ActionRowBuilder()
             .addComponents(select);
 
-        const row3v3 = new ActionRowBuilder()
-            .addComponents(userSelect3v3)
-        
-        const row4v4 = new ActionRowBuilder()
-            .addComponents(userSelect4v4)
-
-        const row5v5 = new ActionRowBuilder()
-            .addComponents(userSelect5v5)
-        
         await interaction.reply({
             content: `The game that was chosen is ${gameName}!`,
         });
+        
         const response = await interaction.followUp({
             content: 'Please choose a team size for your game',
             components: [row, buttonRow],
@@ -104,31 +79,52 @@ export default{
 
         const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
 
+        // Collects the info on which teamsize was chosen then asks which players are playing asking the user to choose
+        // the players in the server
         collector.on('collect', async i => {
             const selection = i.values[0];
 
             if (selection === 'cancel'){
-                await i.update({
+                await interaction.update({
                     content: `Command has been cancelled!`,
                     components: []
                 })
             }
             else if (selection === '3v3'){
                 await i.update({
-                    content: `Who are all playing? Please choose the players that are playing`,
-                    components: [row3v3, buttonRow],
+                    content: `Who all are playing? Please choose the players that are playing`,
+                    components: [new ActionRowBuilder().addComponents(userSelect3v3), buttonRow],
                 })
             } else if (selection === '4v4'){
                 await i.update({
-                    content: `Who are all playing? Please choose the players that are playing`,
-                    components: [row4v4],
+                    content: `Who all are playing? Please choose the players that are playing`,
+                    components: [new ActionRowBuilder().addComponents(userSelect4v4), buttonRow],
                 })
             } else if (selection === '5v5'){
                 await i.update({
-                    content: `Who are all playing? Please choose the players that are playing`,
-                    components: [row5v5],
-                })
+                    content: `Who all are playing? Please choose the players that are playing`,
+                    components: [new ActionRowBuilder().addComponents(userSelect5v5), buttonRow],
+                });
             }
+        });
+
+        const userCollector = response.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 3_600_000});
+
+        userCollector.on('collect', async i => {
+            const playerIds = i.values;
+            const teamsize = playerIds.length;
+
+            // From the player's ID obtained, converts it into a @player mention in discord
+            const playerMentions = playerIds.map(id => `<@${id}>`);
+
+            // Randomize and split players into two teams
+            const shuffledPlayers = playerMentions.sort(() => Math.random() - 0.5);
+            const team1 = shuffledPlayers.slice(0, teamsize / 2);
+            const team2 = shuffledPlayers.slice(teamsize / 2);
+            await i.update({
+                content: `Teams have been randomized! The Game chosen is ${gameName}\nTeam 1: ${team1.join(', ')}\nTeam 2: ${team2.join(', ')}\nGood luck players and may the best win!`,
+                components: []
+            });
         })
     },
 };
