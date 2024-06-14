@@ -1,0 +1,54 @@
+Call of Duty
+game_modes:
+  - name: Search & Destroy
+    maps:
+      - name: 6 Star
+        image: ..\Images\6-STAR.jpg
+      - name: Highrise
+        image: ..\Images\Highrise.jpg
+      - name: Invasion
+        image: ..\Images\Invasion.jpg
+      - name: Karachi
+        image: ..\Images\Karachi.jpg
+      - name: Rio
+        image: ..\Images\Rio.jpg
+  - name: Hardpoint
+    maps:
+      - name: 6 Star
+        image: ..\Images\6-STAR.jpg
+      - name: Karachi
+        image: ..\Images\Karachi.jpg
+      - name: Rio
+        image: ..\Images\Rio.jpg
+      - name: Sub Base
+        image: ..\Images\Subbase.jpg
+  - name: Control
+    maps:
+      - name: Highrise
+        image: ..\Images\Highrise.jpg
+      - name: Invasion
+        image: ..\Images\Invasion.jpg
+      - name: Karachi
+        image: ..\Images\Karachi.jpg
+      - name: Vista
+        image: ..\Images\Vista.jpg
+
+League of Legends
+maps:
+  - name: Summoner's Rift
+    image: 
+  - name: ARAM
+    image: 
+game_modes:
+  - Summoner's Rift
+  - ARAM
+
+Valorant
+maps:
+  - name: 
+    image: 
+  - name: 
+    image: 
+game_modes:
+  - Spike Rush
+  - Unrated
