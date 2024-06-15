@@ -4,7 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 
-// Function to read and parse the text file
 async function readGameData() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -13,7 +12,6 @@ async function readGameData() {
 
     const games = {};
     let currentGame = null;
-    let currentSection = null;
     let currentGameMode = null;
 
     data.split('\n').forEach(line => {
@@ -22,40 +20,24 @@ async function readGameData() {
 
         if (!line.startsWith('-') && !line.includes(':')) {
             currentGame = line;
-            games[currentGame] = { maps: [], game_modes: [] };
-        } else if (line === 'maps:') {
-            currentSection = 'maps';
-            currentGameMode = null;
-        } else if (line === 'game_modes:') {
-            currentSection = 'game_modes';
-            currentGameMode = null;
-        } else if (currentSection === 'maps' && line.startsWith('- name:')) {
-            const mapName = line.split(':')[1].trim();
-            games[currentGame].maps.push({ name: mapName, image: '' });
-        } else if (currentSection === 'maps' && line.startsWith('image:')) {
-            const mapImage = line.split(':')[1].trim();
-            games[currentGame].maps[games[currentGame].maps.length - 1].image = mapImage;
-        } else if (currentSection === 'game_modes' && line.startsWith('- name:')) {
+            games[currentGame] = { game_modes: [] };
+        } else if (line.startsWith('- name:')) {
             const gameModeName = line.split(':')[1].trim();
             currentGameMode = { name: gameModeName, maps: [] };
             games[currentGame].game_modes.push(currentGameMode);
-        } else if (currentSection === 'game_modes' && currentGameMode && line.startsWith('- name:')) {
+        } else if (line.startsWith('- mapname:')) {
             const mapName = line.split(':')[1].trim();
             currentGameMode.maps.push({ name: mapName, image: '' });
-        } else if (currentSection === 'game_modes' && currentGameMode && line.startsWith('image:')) {
-            const mapImage = line.split(':')[1].trim();
+        } else if (line.startsWith('image:')) {
+            const mapImage = line.substring(line.indexOf(':') + 1).trim();
             const maps = currentGameMode.maps;
             maps[maps.length - 1].image = mapImage;
-        } else if (currentSection === 'game_modes' && line.startsWith('-')) {
-            const gameModeName = line.split('- ')[1].trim();
-            games[currentGame].game_modes.push({ name: gameModeName, maps: [] });
         }
     });
 
     console.log(games); // For debugging purposes
     return games;
 }
-
 
 export default { 
     data: new SlashCommandBuilder()
@@ -272,8 +254,8 @@ export default {
                 .addFields(
                     { name: 'Team 1', value: team1String, inline: true },
                     { name: 'Team 2', value: team2String, inline: true },
-                    { name: 'Map', value: mapName, inline: true },
-                    { name: 'Game Mode', value: gameModeName, inline: true }
+                    { name: '\nGame Mode', value: gameModeName, inline: true },
+                    { name: '\nMap', value: mapName, inline: true }
                 )
                 .setImage(mapImage)
                 .setFooter({ text: `Game: ${gameName}` })
