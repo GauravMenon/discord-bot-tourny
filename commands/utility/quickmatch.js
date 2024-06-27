@@ -3,7 +3,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-
 async function readGameData() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -35,7 +34,6 @@ async function readGameData() {
         }
     });
 
-    console.log(games); // For debugging purposes
     return games;
 }
 
@@ -75,197 +73,196 @@ export default {
             return;
         }
 
-        console.log(gameInfo.game_modes)
-        const randomGameModeObj = gameInfo.game_modes[Math.floor(Math.random() * gameInfo.game_modes.length)];
-        if (!randomGameModeObj || randomGameModeObj.maps.length === 0) {
-            await interaction.reply({
-                content: `No maps available for the selected game mode!`,
-                ephemeral: true
-            });
-            return;
-        }
+        const handlePlayerSelection = async (interactionOrButton, gameModeName, randomMapName, randomMapImage) => {
+            const select = new StringSelectMenuBuilder()
+                .setCustomId('teamsize')
+                .setPlaceholder('Choose the team sizes!')
+                .addOptions(
+                    new StringSelectMenuOptionBuilder()
+                    .setLabel('2v2')
+                    .setDescription('Choose this if you want two players against two')
+                    .setValue('2v2'),
 
-        const randomMapObj = randomGameModeObj.maps[Math.floor(Math.random() * randomGameModeObj.maps.length)];
-        if (!randomMapObj) {
-            await interaction.reply({
-                content: `No maps found for the selected game mode!`,
-                ephemeral: true
-            });
-            return;
-        }
-
-        const randomMapName = randomMapObj.name;
-        const randomMapImage = randomMapObj.image;
-
-        const select = new StringSelectMenuBuilder()
-            .setCustomId('teamsize')
-            .setPlaceholder('Choose the team sizes!')
-            .addOptions(
-                new StringSelectMenuOptionBuilder()
-                .setLabel('2v2')
-                .setDescription('Choose this if you want two players against two')
-                .setValue('2v2'),
-
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('3v3')
-                    .setDescription('Choose this if you want three players against three')
-                    .setValue('3v3'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('3v3')
+                        .setDescription('Choose this if you want three players against three')
+                        .setValue('3v3'),
+                        
+                    new StringSelectMenuOptionBuilder()
+                    .setLabel('4v4')
+                    .setDescription('Choose this if you want four players against four')
+                    .setValue('4v4'),
                     
-                new StringSelectMenuOptionBuilder()
-                .setLabel('4v4')
-                .setDescription('Choose this if you want four players against four')
-                .setValue('4v4'),
-                
-                new StringSelectMenuOptionBuilder()
-                    .setLabel('5v5')
-                    .setDescription('Choose this if you want five players against five')
-                    .setValue('5v5'),
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel('5v5')
+                        .setDescription('Choose this if you want five players against five')
+                        .setValue('5v5'),
+                );
+
+            const cancel = new ButtonBuilder()
+                .setCustomId('cancel')
+                .setLabel('Cancel')
+                .setStyle(ButtonStyle.Danger);
+
+            const buttonRow = new ActionRowBuilder()
+                .addComponents(cancel);
+
+            const row = new ActionRowBuilder()
+                .addComponents(select);
+
+            if (interactionOrButton.update) {
+                await interactionOrButton.update({
+                    content: `The game mode is ${gameModeName}. The map is ${randomMapName}. Please choose a team size for your game:`,
+                    components: [row, buttonRow]
+                });
+            } else {
+                await interactionOrButton.reply({
+                    content: `The game mode is ${gameModeName}. The map is ${randomMapName}. Please choose a team size for your game:`,
+                    components: [row, buttonRow]
+                });
+            }
+
+            const sizeCollector = interactionOrButton.channel.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60_000 });
+
+            sizeCollector.on('collect', async sizeInteraction => {
+                const selection = sizeInteraction.values[0];
+
+                if (selection === 'cancel') {
+                    await sizeInteraction.update({
+                        content: `Command has been cancelled!`,
+                        components: []
+                    });
+                } else {
+                    // Handle team size selection
+                    const teamsize = parseInt(selection.split('v')[0]) * 2;
+
+                    const userSelect = new UserSelectMenuBuilder()
+                        .setCustomId('players')
+                        .setPlaceholder('Choose the players')
+                        .setMinValues(teamsize)
+                        .setMaxValues(teamsize);
+
+                    const userRow = new ActionRowBuilder()
+                        .addComponents(userSelect);
+
+                    await sizeInteraction.update({
+                        content: `Who all are playing? Please choose the players that are playing`,
+                        components: [userRow, buttonRow],
+                    });
+
+                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 60_000 });
+
+                    userCollector.on('collect', async userInteraction => {
+                        const playerIds = userInteraction.values;
+
+                        const playerMentions = playerIds.map(id => `<@${id}>`);
+                        const shuffledPlayers = playerMentions.sort(() => Math.random() - 0.5);
+                        const team1 = shuffledPlayers.slice(0, Math.ceil(teamsize / 2));
+                        const team2 = shuffledPlayers.slice(Math.ceil(teamsize / 2));
+
+                        // Ensure the values are strings
+                        const team1String = team1.join(', ');
+                        const team2String = team2.join(', ');
+                        const mapName = randomMapName;
+                        const gamemodeName = gameModeName;
+                        const mapImage = randomMapImage;
+
+                        console.log({
+                            team1: team1String,
+                            team2: team2String,
+                            mapName,
+                            gamemodeName,
+                            mapImage
+                        }); // For debugging purposes
+
+                        const embed = new EmbedBuilder()
+                            .setTitle(`Gamemode: ${gameModeName}`)
+                            .addFields(
+                                { name: '\nTeam 1', value: team1String, inline: true },
+                                { name: '\nTeam 2', value: team2String, inline: true },
+                                { name: '\nMap', value: mapName, inline: true }
+                            )
+                            .setImage(mapImage)
+                            .setFooter({ text: `Game: ${gameName}` })
+                            .setColor('#00FF00');
+
+                        await userInteraction.update({
+                            content: `Teams have been randomized, Good luck!`,
+                            embeds: [embed],
+                            components: []
+                        });
+                    });
+                }
+            });
+        };
+        if (gameName === 'League of Legends' || gameName === 'Valorant') {
+            // Create buttons for game modes
+            const gameModeButtons = gameInfo.game_modes.map(mode => 
+                new ButtonBuilder()
+                    .setCustomId(mode.name)
+                    .setLabel(mode.name)
+                    .setStyle(ButtonStyle.Primary)
             );
 
-        const userSelect1v1 = new UserSelectMenuBuilder()
-            .setCustomId('users1v1')
-            .setPlaceholder('Select up to 10 players for the pool of players that will 1v1')
-            .setMinValues(2)
-            .setMaxValues(10);
+            const row = new ActionRowBuilder().addComponents(gameModeButtons);
 
-        const userSelect2v2 = new UserSelectMenuBuilder()
-            .setCustomId('users2v2')
-            .setPlaceholder('Select 4 players for this match')
-            .setMinValues(4)
-            .setMaxValues(4);
-
-        const userSelect3v3 = new UserSelectMenuBuilder()
-            .setCustomId('users3v3')
-            .setPlaceholder('Select 6 players for this match')
-            .setMinValues(6)
-            .setMaxValues(6);
-            
-        const userSelect4v4 = new UserSelectMenuBuilder()
-            .setCustomId('users4v4')
-            .setPlaceholder('Select 8 players for this match')
-            .setMinValues(8)
-            .setMaxValues(8);
-
-        const userSelect5v5 = new UserSelectMenuBuilder()
-            .setCustomId('users5v5')
-            .setPlaceholder('Select 10 players for this match')
-            .setMinValues(10)
-            .setMaxValues(10);
-
-        const cancel = new ButtonBuilder()
-            .setCustomId('cancel')
-            .setLabel('Cancel')
-            .setStyle(ButtonStyle.Danger);
-
-        const buttonRow = new ActionRowBuilder()
-            .addComponents(cancel);
-
-        const row = new ActionRowBuilder()
-            .addComponents(select);
-
-        await interaction.reply({
-            content: `The game that was chosen is ${gameName}! The map is ${randomMapName} and the game mode is ${randomGameModeObj.name}`,
-        });
-        
-        const response = await interaction.followUp({
-            content: 'Please choose a team size for your game',
-            components: [row, buttonRow],
-        });
-
-        const collector = response.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 3_600_000 });
-
-        collector.on('collect', async i => {
-            const selection = i.values[0];
-
-            if (selection === 'cancel') {
-                await interaction.update({
-                    content: `Command has been cancelled!`,
-                    components: []
-                });
-            } else if (selection === '1v1') {
-                await i.update({
-                    content: `Who all are playing? Please choose the players that are playing`,
-                    components: [new ActionRowBuilder().addComponents(userSelect1v1), buttonRow],
-                });
-            } else if (selection === '2v2') {
-                await i.update({
-                    content: `Who all are playing? Please choose the players that are playing`,
-                    components: [new ActionRowBuilder().addComponents(userSelect2v2), buttonRow],
-                });
-            } else if (selection === '3v3') {
-                await i.update({
-                    content: `Who all are playing? Please choose the players that are playing`,
-                    components: [new ActionRowBuilder().addComponents(userSelect3v3), buttonRow],
-                });
-            } else if (selection === '4v4') {
-                await i.update({
-                    content: `Who all are playing? Please choose the players that are playing`,
-                    components: [new ActionRowBuilder().addComponents(userSelect4v4), buttonRow],
-                });
-            } else if (selection === '5v5') {
-                await i.update({
-                    content: `Who all are playing? Please choose the players that are playing`,
-                    components: [new ActionRowBuilder().addComponents(userSelect5v5), buttonRow],
-                });
-            }
-        });
-
-        const buttonCollector = response.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
-
-        buttonCollector.on('collect', async i => {
-            if (i.customId === 'cancel') {
-                await i.update({
-                    content: `Command has been cancelled!`,
-                    components: []
-                });
-                collector.stop();
-                buttonCollector.stop();
-            }
-        });
-
-        const userCollector = response.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 3_600_000 });
-
-        userCollector.on('collect', async i => {
-            const playerIds = i.values;
-            const teamsize = playerIds.length;
-
-            const playerMentions = playerIds.map(id => `<@${id}>`);
-            const shuffledPlayers = playerMentions.sort(() => Math.random() - 0.5);
-            const team1 = shuffledPlayers.slice(0, Math.ceil(teamsize / 2));
-            const team2 = shuffledPlayers.slice(Math.ceil(teamsize / 2));
-
-            // Ensure the values are strings
-            const team1String = team1.join(', ');
-            const team2String = team2.join(', ');
-            const mapName = randomMapName;
-            const gameModeName = randomGameModeObj.name;
-            const mapImage = randomMapImage;
-
-            console.log({
-                team1: team1String,
-                team2: team2String,
-                mapName,
-                gameModeName,
-                mapImage
-            }); // For debugging purposes
-
-            const embed = new EmbedBuilder()
-                .setTitle('Inhouse quickmatch')
-                .addFields(
-                    { name: 'Team 1', value: team1String, inline: true },
-                    { name: 'Team 2', value: team2String, inline: true },
-                    { name: '\nGame Mode', value: gameModeName, inline: true },
-                    { name: '\nMap', value: mapName, inline: true }
-                )
-                .setImage(mapImage)
-                .setFooter({ text: `Game: ${gameName}` })
-                .setColor('#00FF00');
-
-            await i.update({
-                content: `Teams have been randomized!`,
-                embeds: [embed],
-                components: []
+            await interaction.reply({
+                content: `You have chosen ${gameName}. Please select a game mode:`,
+                components: [row]
             });
-        });
+
+            const collector = interaction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 60_000 });
+
+            collector.on('collect', async i => {
+                const selectedGameMode = i.customId;
+                const selectedMode = gameInfo.game_modes.find(mode => mode.name === selectedGameMode);
+
+                if (!selectedMode || selectedMode.maps.length === 0) {
+                    await i.reply({
+                        content: `No maps available for the selected game mode!`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+
+                const randomMapObj = selectedMode.maps[Math.floor(Math.random() * selectedMode.maps.length)];
+                if (!randomMapObj) {
+                    await i.reply({
+                        content: `No maps found for the selected game mode!`,
+                        ephemeral: true
+                    });
+                    return;
+                }
+
+                const randomMapName = randomMapObj.name;
+                const randomMapImage = randomMapObj.image;
+
+                await handlePlayerSelection(i, selectedGameMode, randomMapName, randomMapImage);
+            });
+        } else {
+            // Existing logic for Call of Duty or other games without specific mode selection
+            const randomGameModeObj = gameInfo.game_modes[Math.floor(Math.random() * gameInfo.game_modes.length)];
+            if (!randomGameModeObj || randomGameModeObj.maps.length === 0) {
+                await interaction.reply({
+                    content: `No maps available for the selected game mode!`,
+                    ephemeral: true
+                });
+                return;
+            }
+
+            const randomMapObj = randomGameModeObj.maps[Math.floor(Math.random() * randomGameModeObj.maps.length)];
+            if (!randomMapObj) {
+                await interaction.reply({
+                    content: `No maps found for the selected game mode!`,
+                    ephemeral: true
+                });
+                return;
+            }
+
+            const randomMapName = randomMapObj.name;
+            const randomMapImage = randomMapObj.image;
+
+            await handlePlayerSelection(interaction, randomGameModeObj.name, randomMapName, randomMapImage);
+        }
     },
 };
