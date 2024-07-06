@@ -1,0 +1,82 @@
+Call of Duty
+game_modes:
+  - name: Search & Destroy
+    maps:
+      - mapname: 6 Star
+        image: https://imgur.com/6z0tZRH.jpg
+      - mapname: Highrise
+        image: https://imgur.com/moS1bZE.jpg
+      - mapname: Invasion
+        image: https://imgur.com/8gJfzZ9.jpg
+      - mapname: Karachi
+        image: https://imgur.com/LgbYCr7.jpg
+      - mapname: Rio
+        image: https://imgur.com/lG93Waa.jpg
+  - name: Hardpoint
+    maps:
+      - mapname: 6 Star
+        image: https://imgur.com/6z0tZRH.jpg
+      - mapname: Karachi
+        image: https://imgur.com/LgbYCr7.jpg
+      - mapname: Rio
+        image: https://imgur.com/lG93Waa.jpg
+      - mapname: Sub Base
+        image: https://imgur.com/bMiieid.jpg
+  - name: Control
+    maps:
+      - mapname: Highrise
+        image: https://imgur.com/moS1bZE.jpg
+      - mapname: Invasion
+        image: https://imgur.com/8gJfzZ9.jpg
+      - mapname: Karachi
+        image: https://imgur.com/LgbYCr7.jpg
+      - mapname: Vista
+        image: https://imgur.com/geTIRcQ.jpg
+
+League of Legends
+game_modes:
+  - name: Summoner's Rift
+    maps:
+      - mapname: Summoner's Rift
+        image: https://static.wikia.nocookie.net/leagueoflegends/images/d/d3/Summoners_Rift_Summoner_Platforms.jpg/revision/latest?cb=20140624075315
+  - name: ARAM
+    maps:
+      - mapname: Howling Abyss
+        image: https://static.wikia.nocookie.net/leagueoflegends/images/b/b5/Howling_Abyss_Landscape.png/revision/latest/scale-to-width-down/1000?cb=20170303155408
+
+Valorant
+game_modes:
+  - name: Team Deathmatch
+    maps:
+      - mapname: District
+        image: https://static.wikia.nocookie.net/valorant/images/c/ca/District_Splash.png/revision/latest/scale-to-width-down/1000?cb=20230627133038
+      - mapname: Kasbah
+        image: https://static.wikia.nocookie.net/valorant/images/7/7f/Kasbah_Splash.png/revision/latest/scale-to-width-down/1000?cb=20230627133041
+      - mapname: Piazza
+        image: https://static.wikia.nocookie.net/valorant/images/e/e2/Piazza_Splash.png/revision/latest/scale-to-width-down/1000?cb=20230627133044
+      - mapname: Drift
+        image: https://static.wikia.nocookie.net/valorant/images/d/d0/Drift_Splash.png/revision/latest/scale-to-width-down/1000?cb=20231205181659
+  - name: Unrated/Competitive
+    maps:
+      - mapname: Bind
+        image: https://static.wikia.nocookie.net/valorant/images/2/23/Loading_Screen_Bind.png/revision/latest/scale-to-width-down/1000?cb=20200620202316
+      - mapname: Haven
+        image: https://static.wikia.nocookie.net/valorant/images/7/70/Loading_Screen_Haven.png/revision/latest/scale-to-width-down/1000?cb=20200620202335
+      - (Not in rotation) mapname: Split
+        image: https://static.wikia.nocookie.net/valorant/images/d/d6/Loading_Screen_Split.png/revision/latest/scale-to-width-down/1000?cb=20230411161807
+      - mapname: Ascent
+        image: https://static.wikia.nocookie.net/valorant/images/e/e7/Loading_Screen_Ascent.png/revision/latest/scale-to-width-down/1000?cb=20200607180020
+      - mapname: Icebox
+        image: https://static.wikia.nocookie.net/valorant/images/1/13/Loading_Screen_Icebox.png/revision/latest/scale-to-width-down/1000?cb=20201015084446
+      - (not in rotation) mapname: Breeze
+        image: https://static.wikia.nocookie.net/valorant/images/1/10/Loading_Screen_Breeze.png/revision/latest/scale-to-width-down/1000?cb=20210427160616
+      - (not in rotation) mapname: Fracture
+        image: https://static.wikia.nocookie.net/valorant/images/f/fc/Loading_Screen_Fracture.png/revision/latest/scale-to-width-down/1000?cb=20210908143656
+      - (not in rotation) mapname: Pearl
+        image: https://static.wikia.nocookie.net/valorant/images/a/af/Loading_Screen_Pearl.png/revision/latest/scale-to-width-down/1000?cb=20220622132842
+      - mapname: Lotus
+        image: https://static.wikia.nocookie.net/valorant/images/d/d0/Loading_Screen_Lotus.png/revision/latest/scale-to-width-down/1000?cb=20230106163526
+      - mapname: Sunset
+        image: https://static.wikia.nocookie.net/valorant/images/5/5c/Loading_Screen_Sunset.png/revision/latest/scale-to-width-down/1000?cb=20230829125442
+      - mapname: Abyss
+        image: https://static.wikia.nocookie.net/valorant/images/6/61/Loading_Screen_Abyss.png/revision/latest/scale-to-width-down/1000?cb=20240621121057
