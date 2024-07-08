@@ -30,8 +30,6 @@ game_modes:
         image: https://imgur.com/8gJfzZ9.jpg
       - mapname: Karachi
         image: https://imgur.com/LgbYCr7.jpg
-      - mapname: Vista
-        image: https://imgur.com/geTIRcQ.jpg
 
 League of Legends
 game_modes:
