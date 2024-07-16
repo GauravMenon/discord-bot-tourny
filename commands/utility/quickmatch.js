@@ -1,3 +1,4 @@
+import { time } from "console";
 import { UserSelectMenuBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } from "discord.js";
 import fs from 'fs/promises';
 import path from 'path';
@@ -37,10 +38,11 @@ async function readGameData() {
     return games;
 }
 
+
 export default { 
     data: new SlashCommandBuilder()
         .setName('quickmatch')
-        .setDescription('Set up an inhouse quickmatch between friends!')
+        .setDescription('*TESTING* Set up an inhouse quickmatch between friends!')
         .addStringOption(option => 
             option.setName('game')
                 .setDescription('What game is being played?')
@@ -56,6 +58,8 @@ export default {
 
         const gameData = await readGameData();
         const gameInfo = gameData[gameName];
+
+        let lastSelectedMap = null;
 
         if (!gameInfo) {
             await interaction.reply({
@@ -73,7 +77,10 @@ export default {
             return;
         }
 
+        // Handles the player selection menu after a game has been chosen
         const handlePlayerSelection = async (interactionOrButton, gameModeName, randomMapName, randomMapImage) => {
+
+            // Creates the menu for the choices of team sizes
             const select = new StringSelectMenuBuilder()
                 .setCustomId('teamsize')
                 .setPlaceholder('Choose the team sizes!')
@@ -122,6 +129,7 @@ export default {
                 });
             }
 
+            // Collector that retrives the input of size of teams and how to handle it
             const sizeCollector = interactionOrButton.channel.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60_000 });
 
             sizeCollector.on('collect', async sizeInteraction => {
@@ -167,6 +175,21 @@ export default {
                         const gamemodeName = gameModeName;
                         const mapImage = randomMapImage;
 
+                        const newMatchButton = new ButtonBuilder()
+                            .setCustomId('newMatch')
+                            .setLabel('Create new match')
+                            .setStyle(ButtonStyle.Success);
+                        
+                        const gameModeButtons = gameInfo.game_modes.map(mode => 
+                            new ButtonBuilder()
+                                .setCustomId(mode.name)
+                                .setLabel(mode.name)
+                                .setStyle(ButtonStyle.Primary)
+                        );
+        
+                        const buttonRow = new ActionRowBuilder()
+                            .addComponents(gameModeButtons);
+
                         console.log({
                             team1: team1String,
                             team2: team2String,
@@ -189,9 +212,91 @@ export default {
                         await userInteraction.update({
                             content: `Teams have been randomized, Good luck!`,
                             embeds: [embed],
-                            components: []
+                            components: [buttonRow]
                         });
                     });
+            
+                    const startNewMatch = async (interaction) => {
+                        const selectedGameMode = interaction.customId;
+                        const selectedMode = gameInfo.game_modes.find(mode => mode.name === selectedGameMode);
+        
+                        if (!selectedMode || selectedMode.maps.length === 0) {
+                            await i.reply({
+                                content: `No maps available for the selected game mode!`,
+                                ephemeral: true
+                            });
+                            return;
+                        }
+        
+                        let randomMapObj;
+                        do {
+                            randomMapObj = selectedMode.maps[Math.floor(Math.random() * selectedMode.maps.length)];
+                        } while (randomMapObj && randomMapObj.name === lastSelectedMap);
+
+                        if (!randomMapObj) {
+                            await i.reply({
+                                content: `No maps found for the selected game mode!`,
+                                ephemeral: true
+                            });
+                            return;
+                        }
+        
+                        const randomMapName = randomMapObj.name;
+                        const randomMapImage = randomMapObj.image;
+
+                        // Update the last selected map
+                        lastSelectedMap = randomMapName;
+
+                        const newMatchButton = new ButtonBuilder()
+                            .setCustomId('newMatch')
+                            .setLabel('Create new match')
+                            .setStyle(ButtonStyle.Success);
+
+                        const gameModeButtons = gameInfo.game_modes.map(mode => 
+                            new ButtonBuilder()
+                                .setCustomId(mode.name)
+                                .setLabel(mode.name)
+                                .setStyle(ButtonStyle.Primary)
+                        );
+        
+                        const cancel = new ButtonBuilder()
+                            .setCustomId('cancel')
+                            .setLabel('Cancel')
+                            .setStyle(ButtonStyle.Danger);
+
+                        const buttonRow = new ActionRowBuilder()
+                            .addComponents(gameModeButtons);
+
+                        await interaction.deferReply()
+                        await interaction.editReply({
+                            content: `New match: ${selectedGameMode} on ${randomMapName}`,
+                            components: [buttonRow]
+                        });
+                        
+                        const collector = interaction.message.createMessageComponentCollector({componentType: ComponentType.Button, time: 10_000 });
+            
+                        collector.once('collect', async i => {
+                            if (i.customId === 'newMatch') {
+                                await startNewMatch(i)
+                                collector.stop('Collector stopped')
+                            }
+                        });
+                        
+                        collector.on('end', (collected, reason) => {
+                            console.log(`Collected ${collected.size} interactions.`);
+                            if (reason && reason === 'Collector stopped'){
+                                console.log('it happened manually')
+                            } else {
+                                console.log('It did not happen manually')
+                            }
+                        });
+                    }
+                    const matchCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 1_200_000 });
+
+                    matchCollector.on('collect', async matchInteraction => {
+                        await startNewMatch(matchInteraction)
+                    })
+            
                 }
             });
         };
@@ -261,6 +366,8 @@ export default {
 
             const randomMapName = randomMapObj.name;
             const randomMapImage = randomMapObj.image;
+
+            lastSelectedMap = randomMapName;
 
             await handlePlayerSelection(interaction, randomGameModeObj.name, randomMapName, randomMapImage);
         }
