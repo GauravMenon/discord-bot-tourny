@@ -31,7 +31,6 @@ game_modes:
       - mapname: Karachi
         image: https://imgur.com/LgbYCr7.jpg
 
-
 League of Legends
 game_modes:
   - name: Summoner's Rift
