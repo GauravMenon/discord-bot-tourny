@@ -1,9 +1,9 @@
-import { time } from "console";
 import { UserSelectMenuBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, EmbedBuilder } from "discord.js";
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+//Reads the data from a textfile of which games and game modes to use for the command
 async function readGameData() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -18,17 +18,17 @@ async function readGameData() {
         line = line.trim();
         if (line === '') return;
 
-        if (!line.startsWith('-') && !line.includes(':')) {
+        if (!line.startsWith('-') && !line.includes(':')) { // Finds the line which the game is on
             currentGame = line;
             games[currentGame] = { game_modes: [] };
-        } else if (line.startsWith('- name:')) {
+        } else if (line.startsWith('- name:')) { // Populates the game's gamemodes
             const gameModeName = line.split(':')[1].trim();
             currentGameMode = { name: gameModeName, maps: [] };
             games[currentGame].game_modes.push(currentGameMode);
-        } else if (line.startsWith('- mapname:')) {
+        } else if (line.startsWith('- mapname:')) { // Populates the game's maps based on gamemode
             const mapName = line.split(':')[1].trim();
             currentGameMode.maps.push({ name: mapName, image: '' });
-        } else if (line.startsWith('image:')) {
+        } else if (line.startsWith('image:')) { //If an image of the map is there, finds and uses that
             const mapImage = line.substring(line.indexOf(':') + 1).trim();
             const maps = currentGameMode.maps;
             maps[maps.length - 1].image = mapImage;
@@ -38,11 +38,10 @@ async function readGameData() {
     return games;
 }
 
-
 export default { 
     data: new SlashCommandBuilder()
         .setName('quickmatch')
-        .setDescription('*TESTING* Set up an inhouse quickmatch between friends!')
+        .setDescription('Set up an inhouse quickmatch between friends!')
         .addStringOption(option => 
             option.setName('game')
                 .setDescription('What game is being played?')
@@ -55,11 +54,10 @@ export default {
 
     async execute(interaction) {
         const gameName = interaction.options.getString('game') ?? 'No game chosen';
-
         const gameData = await readGameData();
         const gameInfo = gameData[gameName];
-
         let lastSelectedMap = null;
+
 
         if (!gameInfo) {
             await interaction.reply({
@@ -106,6 +104,7 @@ export default {
                         .setValue('5v5'),
                 );
 
+            // Create the buttons for the next message
             const cancel = new ButtonBuilder()
                 .setCustomId('cancel')
                 .setLabel('Cancel')
@@ -158,7 +157,8 @@ export default {
                         components: [userRow, buttonRow],
                     });
 
-                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 60_000 });
+                    // Collector that retrives the players chosen and uses it for the match to be created
+                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 600_000 });
 
                     userCollector.on('collect', async userInteraction => {
                         const playerIds = userInteraction.values;
@@ -216,6 +216,7 @@ export default {
                         });
                     });
             
+                    // Creates a new match everytime one of the buttons are pressed after a match for Call of Duty has been made
                     const startNewMatch = async (interaction) => {
                         const selectedGameMode = interaction.customId;
                         const selectedMode = gameInfo.game_modes.find(mode => mode.name === selectedGameMode);
@@ -242,15 +243,9 @@ export default {
                         }
         
                         const randomMapName = randomMapObj.name;
-                        const randomMapImage = randomMapObj.image;
 
                         // Update the last selected map
                         lastSelectedMap = randomMapName;
-
-                        const newMatchButton = new ButtonBuilder()
-                            .setCustomId('newMatch')
-                            .setLabel('Create new match')
-                            .setStyle(ButtonStyle.Success);
 
                         const gameModeButtons = gameInfo.game_modes.map(mode => 
                             new ButtonBuilder()
@@ -258,11 +253,6 @@ export default {
                                 .setLabel(mode.name)
                                 .setStyle(ButtonStyle.Primary)
                         );
-        
-                        const cancel = new ButtonBuilder()
-                            .setCustomId('cancel')
-                            .setLabel('Cancel')
-                            .setStyle(ButtonStyle.Danger);
 
                         const buttonRow = new ActionRowBuilder()
                             .addComponents(gameModeButtons);
@@ -273,23 +263,6 @@ export default {
                             components: [buttonRow]
                         });
                         
-                        const collector = interaction.message.createMessageComponentCollector({componentType: ComponentType.Button, time: 10_000 });
-            
-                        collector.once('collect', async i => {
-                            if (i.customId === 'newMatch') {
-                                await startNewMatch(i)
-                                collector.stop('Collector stopped')
-                            }
-                        });
-                        
-                        collector.on('end', (collected, reason) => {
-                            console.log(`Collected ${collected.size} interactions.`);
-                            if (reason && reason === 'Collector stopped'){
-                                console.log('it happened manually')
-                            } else {
-                                console.log('It did not happen manually')
-                            }
-                        });
                     }
                     const matchCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 1_200_000 });
 
@@ -367,6 +340,7 @@ export default {
             const randomMapName = randomMapObj.name;
             const randomMapImage = randomMapObj.image;
 
+            // Update the lastSelectedMap with the last map chosen
             lastSelectedMap = randomMapName;
 
             await handlePlayerSelection(interaction, randomGameModeObj.name, randomMapName, randomMapImage);
