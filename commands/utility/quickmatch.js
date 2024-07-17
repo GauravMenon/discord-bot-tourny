@@ -174,11 +174,6 @@ export default {
                         const mapName = randomMapName;
                         const gamemodeName = gameModeName;
                         const mapImage = randomMapImage;
-
-                        const newMatchButton = new ButtonBuilder()
-                            .setCustomId('newMatch')
-                            .setLabel('Create new match')
-                            .setStyle(ButtonStyle.Success);
                         
                         const gameModeButtons = gameInfo.game_modes.map(mode => 
                             new ButtonBuilder()
