@@ -20,8 +20,8 @@ game_modes:
         image: https://imgur.com/LgbYCr7.jpg
       - mapname: Rio
         image: https://imgur.com/lG93Waa.jpg
-      - mapname: Sub Base
-        image: https://imgur.com/bMiieid.jpg
+      - mapname: Vista
+        image: https://imgur.com/geTIRcQ.jpg
   - name: Control
     maps:
       - mapname: Highrise

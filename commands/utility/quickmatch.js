@@ -3,6 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+//Reads the data from a textfile of which games and game modes to use for the command
 async function readGameData() {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
@@ -17,17 +18,17 @@ async function readGameData() {
         line = line.trim();
         if (line === '') return;
 
-        if (!line.startsWith('-') && !line.includes(':')) {
+        if (!line.startsWith('-') && !line.includes(':')) { // Finds the line which the game is on
             currentGame = line;
             games[currentGame] = { game_modes: [] };
-        } else if (line.startsWith('- name:')) {
+        } else if (line.startsWith('- name:')) { // Populates the game's gamemodes
             const gameModeName = line.split(':')[1].trim();
             currentGameMode = { name: gameModeName, maps: [] };
             games[currentGame].game_modes.push(currentGameMode);
-        } else if (line.startsWith('- mapname:')) {
+        } else if (line.startsWith('- mapname:')) { // Populates the game's maps based on gamemode
             const mapName = line.split(':')[1].trim();
             currentGameMode.maps.push({ name: mapName, image: '' });
-        } else if (line.startsWith('image:')) {
+        } else if (line.startsWith('image:')) { //If an image of the map is there, finds and uses that
             const mapImage = line.substring(line.indexOf(':') + 1).trim();
             const maps = currentGameMode.maps;
             maps[maps.length - 1].image = mapImage;
@@ -53,9 +54,10 @@ export default {
 
     async execute(interaction) {
         const gameName = interaction.options.getString('game') ?? 'No game chosen';
-
         const gameData = await readGameData();
         const gameInfo = gameData[gameName];
+        let lastSelectedMap = null;
+
 
         if (!gameInfo) {
             await interaction.reply({
@@ -73,7 +75,10 @@ export default {
             return;
         }
 
+        // Handles the player selection menu after a game has been chosen
         const handlePlayerSelection = async (interactionOrButton, gameModeName, randomMapName, randomMapImage) => {
+
+            // Creates the menu for the choices of team sizes
             const select = new StringSelectMenuBuilder()
                 .setCustomId('teamsize')
                 .setPlaceholder('Choose the team sizes!')
@@ -99,6 +104,7 @@ export default {
                         .setValue('5v5'),
                 );
 
+            // Create the buttons for the next message
             const cancel = new ButtonBuilder()
                 .setCustomId('cancel')
                 .setLabel('Cancel')
@@ -122,6 +128,7 @@ export default {
                 });
             }
 
+            // Collector that retrives the input of size of teams and how to handle it
             const sizeCollector = interactionOrButton.channel.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60_000 });
 
             sizeCollector.on('collect', async sizeInteraction => {
@@ -150,7 +157,8 @@ export default {
                         components: [userRow, buttonRow],
                     });
 
-                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 60_000 });
+                    // Collector that retrives the players chosen and uses it for the match to be created
+                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 600_000 });
 
                     userCollector.on('collect', async userInteraction => {
                         const playerIds = userInteraction.values;
@@ -166,6 +174,16 @@ export default {
                         const mapName = randomMapName;
                         const gamemodeName = gameModeName;
                         const mapImage = randomMapImage;
+                        
+                        const gameModeButtons = gameInfo.game_modes.map(mode => 
+                            new ButtonBuilder()
+                                .setCustomId(mode.name)
+                                .setLabel(mode.name)
+                                .setStyle(ButtonStyle.Primary)
+                        );
+        
+                        const buttonRow = new ActionRowBuilder()
+                            .addComponents(gameModeButtons);
 
                         console.log({
                             team1: team1String,
@@ -189,9 +207,64 @@ export default {
                         await userInteraction.update({
                             content: `Teams have been randomized, Good luck!`,
                             embeds: [embed],
-                            components: []
+                            components: [buttonRow]
                         });
                     });
+            
+                    // Creates a new match everytime one of the buttons are pressed after a match for Call of Duty has been made
+                    const startNewMatch = async (interaction) => {
+                        const selectedGameMode = interaction.customId;
+                        const selectedMode = gameInfo.game_modes.find(mode => mode.name === selectedGameMode);
+        
+                        if (!selectedMode || selectedMode.maps.length === 0) {
+                            await i.reply({
+                                content: `No maps available for the selected game mode!`,
+                                ephemeral: true
+                            });
+                            return;
+                        }
+        
+                        let randomMapObj;
+                        do {
+                            randomMapObj = selectedMode.maps[Math.floor(Math.random() * selectedMode.maps.length)];
+                        } while (randomMapObj && randomMapObj.name === lastSelectedMap);
+
+                        if (!randomMapObj) {
+                            await i.reply({
+                                content: `No maps found for the selected game mode!`,
+                                ephemeral: true
+                            });
+                            return;
+                        }
+        
+                        const randomMapName = randomMapObj.name;
+
+                        // Update the last selected map
+                        lastSelectedMap = randomMapName;
+
+                        const gameModeButtons = gameInfo.game_modes.map(mode => 
+                            new ButtonBuilder()
+                                .setCustomId(mode.name)
+                                .setLabel(mode.name)
+                                .setStyle(ButtonStyle.Primary)
+                        );
+
+                        const buttonRow = new ActionRowBuilder()
+                            .addComponents(gameModeButtons);
+
+                        await interaction.deferReply()
+                        await interaction.editReply({
+                            content: `New match: ${selectedGameMode} on ${randomMapName}`,
+                            components: [buttonRow]
+                        });
+                        
+                    }
+                    const matchCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 1_200_000 });
+
+                    matchCollector.on('collect', async matchInteraction => {
+                        await startNewMatch(matchInteraction)
+                    })
+            
                 }
             });
         };
@@ -261,6 +334,9 @@ export default {
 
             const randomMapName = randomMapObj.name;
             const randomMapImage = randomMapObj.image;
+
+            // Update the lastSelectedMap with the last map chosen
+            lastSelectedMap = randomMapName;
 
             await handlePlayerSelection(interaction, randomGameModeObj.name, randomMapName, randomMapImage);
         }
