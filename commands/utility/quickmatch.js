@@ -129,7 +129,7 @@ export default {
             }
 
             // Collector that retrives the input of size of teams and how to handle it
-            const sizeCollector = interactionOrButton.channel.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 60_000 });
+            const sizeCollector = interactionOrButton.channel.createMessageComponentCollector({ componentType: ComponentType.StringSelect, time: 10_000 });
 
             sizeCollector.on('collect', async sizeInteraction => {
                 const selection = sizeInteraction.values[0];
@@ -152,13 +152,15 @@ export default {
                     const userRow = new ActionRowBuilder()
                         .addComponents(userSelect);
 
+                    
                     await sizeInteraction.update({
                         content: `Who all are playing? Please choose the players that are playing`,
                         components: [userRow, buttonRow],
                     });
+                    
 
                     // Collector that retrives the players chosen and uses it for the match to be created
-                    const userCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 600_000 });
+                    const userCollector = sizeInteraction.message.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 600_000 });
 
                     userCollector.on('collect', async userInteraction => {
                         const playerIds = userInteraction.values;
@@ -210,6 +212,7 @@ export default {
                             components: [buttonRow]
                         });
                     });
+                
             
                     // Creates a new match everytime one of the buttons are pressed after a match for Call of Duty has been made
                     const startNewMatch = async (interaction) => {
@@ -238,6 +241,7 @@ export default {
                         }
         
                         const randomMapName = randomMapObj.name;
+                        const mapImage = randomMapObj.image;
 
                         // Update the last selected map
                         lastSelectedMap = randomMapName;
@@ -252,14 +256,24 @@ export default {
                         const buttonRow = new ActionRowBuilder()
                             .addComponents(gameModeButtons);
 
+                        const embed = new EmbedBuilder()
+                        .setTitle(`Gamemode: ${selectedGameMode}`)
+                        .addFields(
+                            { name: '\nMap', value: randomMapName, inline: true }
+                        )
+                        .setImage(mapImage)
+                        .setFooter({ text: `Game: ${gameName}` })
+                        .setColor('#00FF00');
+
                         await interaction.deferReply()
                         await interaction.editReply({
                             content: `New match: ${selectedGameMode} on ${randomMapName}`,
+                            embeds: [embed],
                             components: [buttonRow]
                         });
                         
                     }
-                    const matchCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 1_200_000 });
+                    const matchCollector = sizeInteraction.channel.createMessageComponentCollector({ componentType: ComponentType.Button, time: 3_600_000 });
 
                     matchCollector.on('collect', async matchInteraction => {
                         await startNewMatch(matchInteraction)
@@ -267,6 +281,7 @@ export default {
             
                 }
             });
+
         };
         if (gameName === 'League of Legends' || gameName === 'Valorant') {
             // Create buttons for game modes

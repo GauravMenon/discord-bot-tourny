@@ -4,14 +4,17 @@ game_modes:
     maps:
       - mapname: 6 Star
         image: https://imgur.com/6z0tZRH.jpg
-      - mapname: Highrise
-        image: https://imgur.com/moS1bZE.jpg
-      - mapname: Invasion
-        image: https://imgur.com/8gJfzZ9.jpg
       - mapname: Karachi
         image: https://imgur.com/LgbYCr7.jpg
       - mapname: Rio
         image: https://imgur.com/lG93Waa.jpg
+      - mapname: Tokyo
+        image: https://static.wikia.nocookie.net/callofduty/images/3/34/Tokyo_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240530191625
+      - mapname: Skidrow
+        image: https://static.wikia.nocookie.net/callofduty/images/8/8e/Skidrow_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240503191712
+      - mapname: Incline
+        image: https://static.wikia.nocookie.net/callofduty/images/d/dc/Incline_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240626234021 
+
   - name: Hardpoint
     maps:
       - mapname: 6 Star
