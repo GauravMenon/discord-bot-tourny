@@ -7,7 +7,7 @@ I created this bot as a self project for my friends and I to use and also to fur
 ## Quickmatch Demo
 Here is a demo of the quickmatch command
 
-![Quickmatch Demo](demo/quickmatch_demo.gif)
+![Quickmatch Demo](demo/quickmatchDemo.gif)
 
 ## Technologies Used
 * JavaScript
