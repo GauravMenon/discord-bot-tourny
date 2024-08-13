@@ -160,7 +160,7 @@ export default {
                     
 
                     // Collector that retrives the players chosen and uses it for the match to be created
-                    const userCollector = sizeInteraction.message.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 600_000 });
+                    const userCollector = sizeInteraction.message.createMessageComponentCollector({ componentType: ComponentType.UserSelect, time: 3_600_000 });
 
                     userCollector.on('collect', async userInteraction => {
                         const playerIds = userInteraction.values;

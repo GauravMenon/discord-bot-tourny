@@ -25,6 +25,13 @@ game_modes:
         image: https://imgur.com/lG93Waa.jpg
       - mapname: Vista
         image: https://imgur.com/geTIRcQ.jpg
+      - mapname: Incline
+        image: https://static.wikia.nocookie.net/callofduty/images/d/dc/Incline_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240626234021 
+      - mapname: Departures
+        image: https://static.wikia.nocookie.net/callofduty/images/c/c8/Departures_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240503191115
+      - mapname: Paris
+        image: https://static.wikia.nocookie.net/callofduty/images/9/9d/Paris_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240530191604
+        
   - name: Control
     maps:
       - mapname: Highrise
