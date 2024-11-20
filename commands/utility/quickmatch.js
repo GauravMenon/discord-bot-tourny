@@ -14,6 +14,7 @@ async function readGameData() {
     let currentGame = null;
     let currentGameMode = null;
 
+    //returns a list of games and populates the games maps and gamemodes from a text file
     data.split('\n').forEach(line => {
         line = line.trim();
         if (line === '') return;

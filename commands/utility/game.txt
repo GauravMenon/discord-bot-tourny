@@ -2,44 +2,39 @@ Call of Duty
 game_modes:
   - name: Search & Destroy
     maps:
-      - mapname: 6 Star
-        image: https://imgur.com/6z0tZRH.jpg
-      - mapname: Karachi
-        image: https://imgur.com/LgbYCr7.jpg
-      - mapname: Rio
-        image: https://imgur.com/lG93Waa.jpg
-      - mapname: Tokyo
-        image: https://static.wikia.nocookie.net/callofduty/images/3/34/Tokyo_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240530191625
-      - mapname: Skidrow
-        image: https://static.wikia.nocookie.net/callofduty/images/8/8e/Skidrow_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240503191712
-      - mapname: Incline
-        image: https://static.wikia.nocookie.net/callofduty/images/d/dc/Incline_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240626234021 
+      - mapname: Protocol 
+        image: https://static.wikia.nocookie.net/callofduty/images/f/f6/Protocol_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005122
+      - mapname: Red Card
+        image: https://static.wikia.nocookie.net/callofduty/images/1/10/RedCard_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005125
+      - mapname: Rewind 
+        image: https://static.wikia.nocookie.net/callofduty/images/9/9e/Rewind_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005127
+      - mapname: Skyline
+        image: https://static.wikia.nocookie.net/callofduty/images/8/81/Skyline_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005157
+      - mapname: Vault 
+        image: https://static.wikia.nocookie.net/callofduty/images/e/e8/Vault_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005227
+      - mapname: Vorkuta 
+        image: https://static.wikia.nocookie.net/callofduty/images/0/01/Vorkuta_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005230
 
   - name: Hardpoint
     maps:
-      - mapname: 6 Star
-        image: https://imgur.com/6z0tZRH.jpg
-      - mapname: Karachi
-        image: https://imgur.com/LgbYCr7.jpg
-      - mapname: Rio
-        image: https://imgur.com/lG93Waa.jpg
-      - mapname: Vista
-        image: https://imgur.com/geTIRcQ.jpg
-      - mapname: Incline
-        image: https://static.wikia.nocookie.net/callofduty/images/d/dc/Incline_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240626234021 
-      - mapname: Departures
-        image: https://static.wikia.nocookie.net/callofduty/images/c/c8/Departures_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240503191115
-      - mapname: Paris
-        image: https://static.wikia.nocookie.net/callofduty/images/9/9d/Paris_LoadingScreen_MWIII.png/revision/latest/scale-to-width-down/1000?cb=20240530191604
-        
-  - name: Control
+      - mapname: Vault
+        image: https://static.wikia.nocookie.net/callofduty/images/e/e8/Vault_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005227
+      - mapname: Rewind
+        image: https://static.wikia.nocookie.net/callofduty/images/9/9e/Rewind_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005127
+      - mapname: Protocol
+        image: https://static.wikia.nocookie.net/callofduty/images/f/f6/Protocol_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005122
+      - mapname: Red Card
+        image: https://static.wikia.nocookie.net/callofduty/images/1/10/RedCard_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005125
+      - mapname: Skyline
+        image: https://static.wikia.nocookie.net/callofduty/images/8/81/Skyline_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005157
+      - mapname: Hideout 
+        image: https://static.wikia.nocookie.net/callofduty/images/f/fa/Hideout_Promo_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241107181919
+  - (not used)name: Control
     maps:
-      - mapname: Highrise
-        image: https://imgur.com/moS1bZE.jpg
-      - mapname: Invasion
-        image: https://imgur.com/8gJfzZ9.jpg
-      - mapname: Karachi
-        image: https://imgur.com/LgbYCr7.jpg
+      - mapname: Protocol
+        image: https://static.wikia.nocookie.net/callofduty/images/f/f6/Protocol_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005122
+      - mapname: Vault
+        image: https://static.wikia.nocookie.net/callofduty/images/e/e8/Vault_MenuScreen_BO6.jpg/revision/latest/scale-to-width-down/1000?cb=20241028005227
 
 League of Legends
 game_modes:
@@ -70,19 +65,19 @@ game_modes:
         image: https://static.wikia.nocookie.net/valorant/images/2/23/Loading_Screen_Bind.png/revision/latest/scale-to-width-down/1000?cb=20200620202316
       - mapname: Haven
         image: https://static.wikia.nocookie.net/valorant/images/7/70/Loading_Screen_Haven.png/revision/latest/scale-to-width-down/1000?cb=20200620202335
-      - (Not in rotation) mapname: Split
+      - mapname: Split
         image: https://static.wikia.nocookie.net/valorant/images/d/d6/Loading_Screen_Split.png/revision/latest/scale-to-width-down/1000?cb=20230411161807
       - mapname: Ascent
         image: https://static.wikia.nocookie.net/valorant/images/e/e7/Loading_Screen_Ascent.png/revision/latest/scale-to-width-down/1000?cb=20200607180020
-      - mapname: Icebox
+      - (not in rotation) mapname: Icebox
         image: https://static.wikia.nocookie.net/valorant/images/1/13/Loading_Screen_Icebox.png/revision/latest/scale-to-width-down/1000?cb=20201015084446
       - (not in rotation) mapname: Breeze
         image: https://static.wikia.nocookie.net/valorant/images/1/10/Loading_Screen_Breeze.png/revision/latest/scale-to-width-down/1000?cb=20210427160616
       - (not in rotation) mapname: Fracture
         image: https://static.wikia.nocookie.net/valorant/images/f/fc/Loading_Screen_Fracture.png/revision/latest/scale-to-width-down/1000?cb=20210908143656
-      - (not in rotation) mapname: Pearl
+      - mapname: Pearl
         image: https://static.wikia.nocookie.net/valorant/images/a/af/Loading_Screen_Pearl.png/revision/latest/scale-to-width-down/1000?cb=20220622132842
-      - mapname: Lotus
+      - (not in rotation) mapname: Lotus
         image: https://static.wikia.nocookie.net/valorant/images/d/d0/Loading_Screen_Lotus.png/revision/latest/scale-to-width-down/1000?cb=20230106163526
       - mapname: Sunset
         image: https://static.wikia.nocookie.net/valorant/images/5/5c/Loading_Screen_Sunset.png/revision/latest/scale-to-width-down/1000?cb=20230829125442
